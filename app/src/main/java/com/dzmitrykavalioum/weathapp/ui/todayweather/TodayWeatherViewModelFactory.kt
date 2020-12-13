@@ -1,13 +1,13 @@
-package com.dzmitrykavalioum.weathapp.ui.home
+package com.dzmitrykavalioum.weathapp.ui.todayweather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.dzmitrykavalioum.weathapp.repository.Repository
 
-class HomeViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
+class TodayWeatherViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return HomeViewModel(repository) as T
+        return TodayWeatherViewModel(repository) as T
     }
 
 }
