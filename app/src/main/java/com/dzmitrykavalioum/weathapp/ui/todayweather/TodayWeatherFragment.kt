@@ -13,6 +13,7 @@ import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -25,6 +26,7 @@ import com.dzmitrykavalioum.weathapp.R
 import com.dzmitrykavalioum.weathapp.repository.Repository
 import com.dzmitrykavalioum.weathapp.utils.Constants.Companion.APP_ID
 import com.google.android.gms.location.*
+import com.squareup.picasso.Picasso
 import java.lang.IllegalStateException
 import java.util.jar.Manifest
 import kotlin.properties.Delegates
@@ -36,11 +38,13 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
     private var latitude: Double = 0.0
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var locationRequest: LocationRequest
+    var presenter: TodayWeatherPresenter?= null
     private lateinit var todayWeatherViewModel: TodayWeatherViewModel
     private lateinit var tvTemp: TextView
     private lateinit var tvCity: TextView
     private lateinit var tvHumi: TextView
     private lateinit var pb_load:ProgressBar
+    private lateinit var iv_weather:ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,38 +54,20 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
 //        homeViewModel =
 //            ViewModelProvider(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-//        val textView: TextView = root.findViewById(R.id.text_home)
-//        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-//          textView.text = it
-//        })
-        //val tvCity:TextView = root.findViewById(R.id.tv_city)
-        //val tvTemperature:TextView = root.findViewById(R.id.tv_temp)
-        //val tvHumidity:TextView = root.findViewById(R.id.tv_humidity)
-        //val repository = Repository()
+
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
         getLastLocation()
-        val presenter: TodayWeatherPresenter = TodayWeatherPresenter(this)
+        presenter  = TodayWeatherPresenter(this)
         tvCity = root.findViewById(R.id.tv_city)
         tvTemp = root.findViewById(R.id.tv_temp)
         tvHumi = root.findViewById(R.id.tv_humidity)
         pb_load = root.findViewById(R.id.pb_load)
+        iv_weather = root.findViewById(R.id.iv_weather)
 
-        presenter.getTodayWeather("minsk", "metric", APP_ID)
+        //presenter.getTodayWeather("london", "metric", APP_ID)
+//        presenter.getTodayWeatherByLonLat(latitude,longitude, "metric", APP_ID)
 
-
-//        val viewModelFactory = TodayWeatherViewModelFactory(repository)
-//        todayWeatherViewModel = ViewModelProvider(this, viewModelFactory).get(TodayWeatherViewModel::class.java)
-//        todayWeatherViewModel.getTodayWeatherByCity("Minsk","metric", APP_ID)
-//        todayWeatherViewModel.myResponce.observe(viewLifecycleOwner, Observer { responce ->
-//            tvCity.setText(responce.name.toString())
-//            tvTemperature.setText(responce.main.temp.toString())
-//            tvHumidity.setText(responce.main.humidity.toString())
-//            Log.d("Responce", responce.main.temp.toString())
-//            Log.d("Responce", responce.main.humidity.toString())
-//            Log.d("Responce", responce.main.temp.toString())
-//
-//        })
         return root
     }
 
@@ -89,6 +75,8 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
         tvCity.setText(todayWeather.name.toString())
         tvTemp.setText(todayWeather.main.temp.toString())
         tvHumi.setText(todayWeather.main.humidity.toString())
+        val imageUrl = "http://openweathermap.org/img/wn/"+todayWeather.weather.get(0).icon+"@2x.png"
+        Picasso.get().load(imageUrl).into(iv_weather)
 
 
     }
@@ -160,11 +148,12 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
 
                         latitude = location.latitude
                         longitude = location.longitude
-                        Toast.makeText(
-                            activity,
-                            "Your location is: \t lat: " + location.latitude.toString() + " lon: " + location.longitude.toString(),
-                            Toast.LENGTH_LONG
-                        ).show()
+                        presenter?.getTodayWeatherByLonLat(latitude,longitude, "metric", APP_ID)
+//                        Toast.makeText(
+//                            activity,
+//                            "Your location is: \t lat: " + location.latitude.toString() + " lon: " + location.longitude.toString(),
+//                            Toast.LENGTH_LONG
+//                        ).show()
                     }
                 }
             } else {

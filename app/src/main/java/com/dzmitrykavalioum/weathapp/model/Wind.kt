@@ -12,7 +12,7 @@ For support, please feel free to contact me at https://www.linkedin.com/in/syeda
 
 data class Wind (
 
-	val speed : Int,
+	val speed : Double,
 	val deg : Int,
 	val gust : Int
 )

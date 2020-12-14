@@ -20,5 +20,12 @@ interface WeatherApiService {
         @Query("appid") appid: String
     ): Call<InfoWeather>
 
+    @GET("weather")
+    fun getTodayWeatherByLonLat(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("units") units: String,
+        @Query("appid") appid: String
+    ): Call<InfoWeather>
 
 }
