@@ -1,17 +1,12 @@
 package com.dzmitrykavalioum.weathapp
 
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_today, R.id.navigation_forecast
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

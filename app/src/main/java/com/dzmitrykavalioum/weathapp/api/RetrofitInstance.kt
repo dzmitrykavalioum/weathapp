@@ -13,7 +13,7 @@ object RetrofitInstance {
 
     private val retrofit by lazy {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC)
-        val client:OkHttpClient = OkHttpClient().newBuilder().addInterceptor(interceptor).build()
+        val client:OkHttpClient = OkHttpClient().newBuilder().addNetworkInterceptor(interceptor).build()
         Retrofit.Builder()
 
             .baseUrl(BASE_URL)

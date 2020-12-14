@@ -6,4 +6,7 @@
     <string name="temp">Temperature</string>
     <string name="humidity">Humidity</string>
     <string name="city">City</string>
+    <string name="time">Time</string>
+    <string name="description">Descritpion</string>
+    <string name="temp_short">Temp</string>
 </resources>

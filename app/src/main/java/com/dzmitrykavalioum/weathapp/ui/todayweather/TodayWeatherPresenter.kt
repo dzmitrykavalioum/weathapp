@@ -3,8 +3,6 @@ package com.dzmitrykavalioum.weathapp.ui.todayweather
 import InfoWeather
 import android.util.Log
 import com.dzmitrykavalioum.weathapp.api.RetrofitInstance
-import com.dzmitrykavalioum.weathapp.api.WeatherApi
-import com.dzmitrykavalioum.weathapp.api.WeatherApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,10 +11,7 @@ class TodayWeatherPresenter : TodayWeatherContract.PresenterContract {
 
     private var view: TodayWeatherContract.ViewContract? = null
     private var todayWeather: InfoWeather? = null
-    private var apiClient: RetrofitInstance? = null
-//    init {
-//        apiClient =  WeatherApi.client()
-//    }
+
 
     constructor(view: TodayWeatherContract.ViewContract?) {
         this.view = view
@@ -44,7 +39,7 @@ class TodayWeatherPresenter : TodayWeatherContract.PresenterContract {
     }
 
     override fun getTodayWeatherByLonLat(lat: Double, lon: Double, units: String, appid: String) {
-        val call: Call<InfoWeather> = RetrofitInstance.api.getTodayWeatherByLonLat(lat, lon, units, appid)
+        val call: Call<InfoWeather> = RetrofitInstance.api.getTodayWeatherByLatLon(lat, lon, units, appid)
         view?.showLoading()
         call?.enqueue(object : Callback<InfoWeather> {
             override fun onResponse(call: Call<InfoWeather>, response: Response<InfoWeather>) {

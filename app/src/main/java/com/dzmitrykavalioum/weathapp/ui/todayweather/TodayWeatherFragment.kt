@@ -18,18 +18,13 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.dzmitrykavalioum.weathapp.R
-import com.dzmitrykavalioum.weathapp.repository.Repository
 import com.dzmitrykavalioum.weathapp.utils.Constants.Companion.APP_ID
+import com.dzmitrykavalioum.weathapp.utils.Constants.Companion.METRIC
 import com.google.android.gms.location.*
 import com.squareup.picasso.Picasso
 import java.lang.IllegalStateException
-import java.util.jar.Manifest
-import kotlin.properties.Delegates
 
 class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
 
@@ -53,18 +48,19 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
     ): View? {
 //        homeViewModel =
 //            ViewModelProvider(this).get(HomeViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
+        val root = inflater.inflate(R.layout.fragment_today_weather, container, false)
 
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-        getLastLocation()
+
         presenter  = TodayWeatherPresenter(this)
         tvCity = root.findViewById(R.id.tv_city)
         tvTemp = root.findViewById(R.id.tv_temp)
         tvHumi = root.findViewById(R.id.tv_humidity)
         pb_load = root.findViewById(R.id.pb_load)
         iv_weather = root.findViewById(R.id.iv_weather)
-
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        getLastLocation()
+//        getNewLocation()
         //presenter.getTodayWeather("london", "metric", APP_ID)
 //        presenter.getTodayWeatherByLonLat(latitude,longitude, "metric", APP_ID)
 
@@ -136,6 +132,7 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
     }
 
     private fun getLastLocation() {
+
         if (checkPermission()) {
             if (isLocationEnabled()) {
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
@@ -168,6 +165,7 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
     }
 
     private fun getNewLocation() {
+        showLoading()
         locationRequest = LocationRequest()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 0
@@ -194,6 +192,7 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
         fusedLocationProviderClient!!.requestLocationUpdates(
             locationRequest, locationCallback, Looper.myLooper()
         )
+        hideLoading()
     }
 
     private val locationCallback = object : LocationCallback() {
@@ -203,11 +202,12 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
             try {
                 latitude = lastLocation.latitude
                 longitude = lastLocation.longitude
-                Toast.makeText(
-                    requireContext(),
-                    "Your location is: \t lat: " + lastLocation.latitude.toString() + " lon: " + lastLocation.longitude.toString(),
-                    Toast.LENGTH_LONG
-                ).show()
+                presenter?.getTodayWeatherByLonLat(latitude,longitude, METRIC, APP_ID)
+//                Toast.makeText(
+//                    requireContext(),
+//                    "Your location is: \t lat: " + lastLocation.latitude.toString() + " lon: " + lastLocation.longitude.toString(),
+//                    Toast.LENGTH_LONG
+//                ).show()
             }
             catch (e:IllegalStateException){
                 Log.d("Exception" , "illegal state exception")
