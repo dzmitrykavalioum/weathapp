@@ -12,6 +12,6 @@ For support, please feel free to contact me at https://www.linkedin.com/in/syeda
 
 data class Coord (
 
-	val lon : Double,
-	val lat : Double
+	var lon : Double,
+	var lat : Double
 )

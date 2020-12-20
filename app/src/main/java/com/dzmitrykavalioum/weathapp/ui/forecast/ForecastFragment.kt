@@ -2,7 +2,9 @@ package com.dzmitrykavalioum.weathapp.ui.forecast
 
 import InfoWeatherV2
 import android.app.ActionBar
+import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,7 @@ import com.dzmitrykavalioum.weathapp.R
 import com.dzmitrykavalioum.weathapp.adapters.WeatherAdapter
 import com.dzmitrykavalioum.weathapp.utils.Constants.Companion.APP_ID
 import com.dzmitrykavalioum.weathapp.utils.Constants.Companion.METRIC
+import com.dzmitrykavalioum.weathapp.utils.GpsLocationHelper
 
 class ForecastFragment : Fragment(),ForecastContract.ViewContract {
 
@@ -37,6 +40,20 @@ class ForecastFragment : Fragment(),ForecastContract.ViewContract {
 //    })
         rvForecast = root.findViewById(R.id.rv_forecast)
         pb = root.findViewById(R.id.pb_forecast)
+
+        //gps location 
+
+        GpsLocationHelper().startListeningUserLocation(requireActivity(),object :GpsLocationHelper.MyLocationListener{
+            override fun onLocationChanged(location: Location) {
+                if (location!=null){
+                Log.d("Forecast fragment", location.latitude.toString()+"\t"+location.longitude.toString())
+                GpsLocationHelper().getCityNameByLocation(requireContext(),location.latitude,location.longitude)}
+                else{
+                    Log.d("Forecast fragment","location is null")
+                }
+            }
+        })
+
         presenter = ForecastPresenter(this)
         presenter?.getForecastByCity("minsk",METRIC, APP_ID)
         return root

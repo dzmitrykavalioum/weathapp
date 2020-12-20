@@ -1,5 +1,6 @@
 package com.dzmitrykavalioum.weathapp.ui.todayweather
 
+import Coord
 import InfoWeather
 import android.content.Context
 import android.content.pm.PackageManager
@@ -22,24 +23,29 @@ import androidx.fragment.app.Fragment
 import com.dzmitrykavalioum.weathapp.R
 import com.dzmitrykavalioum.weathapp.utils.Constants.Companion.APP_ID
 import com.dzmitrykavalioum.weathapp.utils.Constants.Companion.METRIC
+import com.dzmitrykavalioum.weathapp.utils.LocationListenerInterface
 import com.google.android.gms.location.*
 import com.squareup.picasso.Picasso
 import java.lang.IllegalStateException
 
-class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
+class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract,
+    LocationListenerInterface {
 
     private var PERMISSION_ID = 716
     private var longitude: Double = 0.0
     private var latitude: Double = 0.0
+    private var coordinates: Coord? = null
+    private var lastLocation: Location? = null
+    private var locationManager: LocationManager? = null
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var locationRequest: LocationRequest
-    var presenter: TodayWeatherPresenter?= null
+    var presenter: TodayWeatherPresenter? = null
     private lateinit var todayWeatherViewModel: TodayWeatherViewModel
     private lateinit var tvTemp: TextView
     private lateinit var tvCity: TextView
     private lateinit var tvHumi: TextView
-    private lateinit var pb_load:ProgressBar
-    private lateinit var iv_weather:ImageView
+    private lateinit var pb_load: ProgressBar
+    private lateinit var iv_weather: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,27 +57,34 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
         val root = inflater.inflate(R.layout.fragment_today_weather, container, false)
 
 
-        presenter  = TodayWeatherPresenter(this)
+        presenter = TodayWeatherPresenter(this)
         tvCity = root.findViewById(R.id.tv_city)
         tvTemp = root.findViewById(R.id.tv_temp)
         tvHumi = root.findViewById(R.id.tv_humidity)
         pb_load = root.findViewById(R.id.pb_load)
         iv_weather = root.findViewById(R.id.iv_weather)
+        init()
+
+        getLastLocation()
+
+        return root
+    }
+
+    private fun init() {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
         getLastLocation()
-//        getNewLocation()
-        //presenter.getTodayWeather("london", "metric", APP_ID)
-//        presenter.getTodayWeatherByLonLat(latitude,longitude, "metric", APP_ID)
 
-        return root
+
+
     }
 
     override fun showTodayWeather(todayWeather: InfoWeather) {
         tvCity.setText(todayWeather.name.toString())
         tvTemp.setText(todayWeather.main.temp.toString())
         tvHumi.setText(todayWeather.main.humidity.toString())
-        val imageUrl = "http://openweathermap.org/img/wn/"+todayWeather.weather.get(0).icon+"@2x.png"
+        val imageUrl =
+            "http://openweathermap.org/img/wn/" + todayWeather.weather.get(0).icon + "@2x.png"
         Picasso.get().load(imageUrl).into(iv_weather)
 
 
@@ -82,7 +95,7 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
     }
 
     override fun showLoading() {
-       pb_load.visibility = VISIBLE
+        pb_load.visibility = VISIBLE
     }
 
     override fun hideLoading() {
@@ -131,6 +144,7 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
         )
     }
 
+
     private fun getLastLocation() {
 
         if (checkPermission()) {
@@ -139,18 +153,10 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
                     var location: Location? = task.result
                     if (location == null) {
                         getNewLocation()
-                        //Toast.makeText(activity,"Your location is disabled ", Toast.LENGTH_LONG).show()
-
                     } else {
-
                         latitude = location.latitude
                         longitude = location.longitude
-                        presenter?.getTodayWeatherByLonLat(latitude,longitude, "metric", APP_ID)
-//                        Toast.makeText(
-//                            activity,
-//                            "Your location is: \t lat: " + location.latitude.toString() + " lon: " + location.longitude.toString(),
-//                            Toast.LENGTH_LONG
-//                        ).show()
+                        presenter?.getTodayWeatherByLonLat(latitude, longitude, "metric", APP_ID)
                     }
                 }
             } else {
@@ -202,15 +208,14 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
             try {
                 latitude = lastLocation.latitude
                 longitude = lastLocation.longitude
-                presenter?.getTodayWeatherByLonLat(latitude,longitude, METRIC, APP_ID)
+                presenter?.getTodayWeatherByLonLat(latitude, longitude, METRIC, APP_ID)
 //                Toast.makeText(
 //                    requireContext(),
 //                    "Your location is: \t lat: " + lastLocation.latitude.toString() + " lon: " + lastLocation.longitude.toString(),
 //                    Toast.LENGTH_LONG
 //                ).show()
-            }
-            catch (e:IllegalStateException){
-                Log.d("Exception" , "illegal state exception")
+            } catch (e: IllegalStateException) {
+                Log.d("Exception", "illegal state exception")
             }
 
 
@@ -228,5 +233,9 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
                 Log.d("Permission", "You have the permission")
             }
         }
+    }
+
+    override fun onLocationChanged(location: Location) {
+
     }
 }
