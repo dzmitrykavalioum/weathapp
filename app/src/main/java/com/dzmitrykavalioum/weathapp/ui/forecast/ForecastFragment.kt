@@ -47,7 +47,8 @@ class ForecastFragment : Fragment(),ForecastContract.ViewContract {
             override fun onLocationChanged(location: Location) {
                 if (location!=null){
                 Log.d("Forecast fragment", location.latitude.toString()+"\t"+location.longitude.toString())
-                GpsLocationHelper().getCityNameByLocation(requireContext(),location.latitude,location.longitude)}
+//                GpsLocationHelper().getCityNameByLocation(requireContext(),location.latitude,location.longitude)
+                }
                 else{
                     Log.d("Forecast fragment","location is null")
                 }
