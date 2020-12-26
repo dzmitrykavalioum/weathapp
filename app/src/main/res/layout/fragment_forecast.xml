@@ -7,13 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.forecast.ForecastFragment" >
 
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_forecast"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/rv_forecast"
-        tools:listitem="@layout/item_weather"
-        tools:layout_editor_absoluteX="151dp"
-        tools:layout_editor_absoluteY="260dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:listitem="@layout/item_weather" />
 
     <ProgressBar
         android:id="@+id/pb_forecast"
@@ -21,7 +23,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        tools:layout_editor_absoluteX="178dp"
-        tools:layout_editor_absoluteY="335dp"
+        app:layout_constraintBottom_toBottomOf="@+id/rv_forecast"
+        app:layout_constraintEnd_toEndOf="@+id/rv_forecast"
+        app:layout_constraintStart_toStartOf="@+id/rv_forecast"
+        app:layout_constraintTop_toTopOf="@+id/rv_forecast"
         tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,12 +13,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.util.*
 
+const val LOCATION_REFRESH_TIME = 100          // the minimum time to get location update
+const val LOCATION_REFRESH_DISTANCE = 30        // the minimum distance to be changed to
+// get location update
+
+const val PERMISSIONS_REQUEST_LOCATION = 77     // just number for comparing requests
+
 class GpsLocationHelper {
 
-    val LOCATION_REFRESH_TIME = 3000        // the minimum time to get location update
-    val LOCATION_REFRESH_DISTANCE =
-        30      // the minimum distance to be changed to get location update
-    val PERMISSIONS_REQUEST_LOCATION = 77     // just number for comparing requests
 
     var myLocationListener: MyLocationListener? = null
 
@@ -27,6 +29,7 @@ class GpsLocationHelper {
     }
 
     fun startListeningUserLocation(context: Context, myListener: MyLocationListener) {
+        Log.d("GPSLocationHelper", "startListeningLocation")
         myLocationListener = myListener
 
         val myLocationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
@@ -35,6 +38,7 @@ class GpsLocationHelper {
             override fun onLocationChanged(p0: Location?) {
                 if (p0 != null) {
                     myLocationListener!!.onLocationChanged(p0)
+                    Log.d("GPSLocationHelper", "location active")
                 } else {
                     Log.d("GPSLocationHelper", "location is null")
                 }
@@ -86,8 +90,7 @@ class GpsLocationHelper {
         var addesses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1)
         if (addesses.size >= 0) {
             Log.d("GpsLocationHelper", addesses.get(0).locality)
-        }
-        else{
+        } else {
             Log.d("GpsLocationHelper", "addresses is empty")
 
         }

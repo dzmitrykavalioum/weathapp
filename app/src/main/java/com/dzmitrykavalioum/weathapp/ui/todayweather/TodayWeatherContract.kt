@@ -1,10 +1,12 @@
 package com.dzmitrykavalioum.weathapp.ui.todayweather
 
 import InfoWeather
+import android.content.Context
 import android.location.Location
 
 interface TodayWeatherContract {
     interface PresenterContract {
+        fun onViewCreated(context: Context)
         fun getTodayWeather(city: String, units: String, appid: String)
         fun getTodayWeatherByLocation(location:Location, units: String, appid: String)
         fun getTodayWeatherByLonLat(lat: Double, lon: Double, units: String, appid: String)

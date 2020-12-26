@@ -1,14 +1,7 @@
 package com.dzmitrykavalioum.weathapp.ui.todayweather
 
-import Coord
 import InfoWeather
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -18,85 +11,67 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import com.dzmitrykavalioum.weathapp.MainActivity
 import com.dzmitrykavalioum.weathapp.R
-import com.dzmitrykavalioum.weathapp.utils.Constants.Companion.APP_ID
-import com.dzmitrykavalioum.weathapp.utils.Constants.Companion.METRIC
-import com.dzmitrykavalioum.weathapp.utils.GpsLocationHelper
-import com.dzmitrykavalioum.weathapp.utils.LocationListenerInterface
-import com.google.android.gms.location.*
 import com.squareup.picasso.Picasso
-import java.lang.IllegalStateException
 
-class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract
-    {
-
-    private var PERMISSION_ID = 716
-    private var longitude: Double = 0.0
-    private var latitude: Double = 0.0
-    private var coordinates: Coord? = null
-    private var lastLocation: Location? = null
-    private var locationManager: LocationManager? = null
-    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    lateinit var locationRequest: LocationRequest
-    var presenter: TodayWeatherPresenter? = null
-    private lateinit var todayWeatherViewModel: TodayWeatherViewModel
+class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract {
+    private var presenter: TodayWeatherPresenter? = null
     private lateinit var tvTemp: TextView
     private lateinit var tvCity: TextView
     private lateinit var tvHumi: TextView
-    private lateinit var pb_load: ProgressBar
-    private lateinit var iv_weather: ImageView
+    private lateinit var pbLoad: ProgressBar
+    private lateinit var ivWeather: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        homeViewModel =
-//            ViewModelProvider(this).get(HomeViewModel::class.java)
-        todayWeatherViewModel = ViewModelProvider(this).get(TodayWeatherViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_today_weather, container, false)
 
 
-        presenter = TodayWeatherPresenter(this)
         tvCity = root.findViewById(R.id.tv_city)
         tvTemp = root.findViewById(R.id.tv_temp)
         tvHumi = root.findViewById(R.id.tv_humidity)
-        pb_load = root.findViewById(R.id.pb_load)
-        iv_weather = root.findViewById(R.id.iv_weather)
-        getLocation()
-
+        pbLoad = root.findViewById(R.id.pb_load)
+        ivWeather = root.findViewById(R.id.iv_weather)
+        if (activity is MainActivity){
+            (activity as MainActivity).supportActionBar?.title = "Today"
+        }
+        presenter = TodayWeatherPresenter(this).apply {
+            onViewCreated(requireContext())
+        }
         return root
     }
 
-    private fun getLocation() {
-
-        GpsLocationHelper().startListeningUserLocation(requireActivity(),object : GpsLocationHelper.MyLocationListener{
-            override fun onLocationChanged(location: Location) {
-                if (location!=null){
-                    presenter?.getTodayWeatherByLocation(location, METRIC, APP_ID)
-                    Log.d("Today Weather fragment", location.latitude.toString()+"\t"+location.longitude.toString())
-                    //GpsLocationHelper().getCityNameByLocation(requireContext(),location.latitude,location.longitude)
-                    }
-                else{
-                    Log.d("Today weather fragment","location is null")
-                }
-            }
-        })
-
-
-    }
+//    private fun getLocation() {
+//
+//        GpsLocationHelper().startListeningUserLocation(requireActivity(),object : GpsLocationHelper.MyLocationListener{
+//            override fun onLocationChanged(location: Location) {
+//                if (location!=null){
+//                    presenter?.getTodayWeatherByLocation(location, METRIC, APP_ID)
+//                    Log.d("Today Weather fragment", location.latitude.toString()+"\t"+location.longitude.toString())
+//                    //GpsLocationHelper().getCityNameByLocation(requireContext(),location.latitude,location.longitude)
+//                    }
+//                else{
+//                    Log.d("Today weather fragment","location is null")
+//                }
+//            }
+//        })
+//
+//
+//    }
 
     override fun showTodayWeather(todayWeather: InfoWeather) {
-        tvCity.setText(todayWeather.name.toString())
-        tvTemp.setText(todayWeather.main.temp.toString())
-        tvHumi.setText(todayWeather.main.humidity.toString())
+        tvCity.text = todayWeather.name.toString()
+        tvTemp.text = todayWeather.main.temp.toString()
+        tvHumi.text = todayWeather.main.humidity.toString()
         val imageUrl =
             "http://openweathermap.org/img/wn/" + todayWeather.weather.get(0).icon + "@2x.png"
-        Picasso.get().load(imageUrl).into(iv_weather)
+        Picasso.get().load(imageUrl).into(ivWeather)
+
 
 
     }
@@ -106,11 +81,11 @@ class TodayWeatherFragment : Fragment(), TodayWeatherContract.ViewContract
     }
 
     override fun showLoading() {
-        pb_load.visibility = VISIBLE
+        pbLoad.visibility = VISIBLE
     }
 
     override fun hideLoading() {
-        pb_load.visibility = INVISIBLE
+        pbLoad.visibility = INVISIBLE
 
     }
 //
