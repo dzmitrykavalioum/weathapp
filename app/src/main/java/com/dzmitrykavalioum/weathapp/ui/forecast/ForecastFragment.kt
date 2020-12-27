@@ -46,9 +46,12 @@ class ForecastFragment : Fragment(), ForecastContract.ViewContract {
         if (activity is MainActivity) {
             (activity as MainActivity).supportActionBar?.title = forecastWeather.city.name
         }
-        rvForecast.adapter = WeatherAdapter(forecastWeather.list)
-        rvForecast.layoutManager = LinearLayoutManager(requireContext())
-        rvForecast.setHasFixedSize(true)
+        if (activity!=null&& isAdded) {
+            rvForecast.adapter = WeatherAdapter(forecastWeather.list)
+            rvForecast.layoutManager = LinearLayoutManager(requireContext())
+            rvForecast.setHasFixedSize(true)
+        }
+
     }
 
     override fun showError(message: String) {

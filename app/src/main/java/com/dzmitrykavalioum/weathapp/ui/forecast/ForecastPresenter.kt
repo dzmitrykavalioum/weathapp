@@ -81,7 +81,7 @@ class ForecastPresenter : ForecastContract.PresenterContract {
                             "Today Weather fragment",
                             location.latitude.toString() + "\t" + location.longitude.toString()
                         )
-                        //GpsLocationHelper().getCityNameByLocation(requireContext(),location.latitude,location.longitude)
+
                     } else {
                         Log.d("Today weather fragment", "location is null")
                     }

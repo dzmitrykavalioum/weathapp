@@ -18,7 +18,7 @@ class TodayWeatherPresenter(
     private var todayWeather: InfoWeather? = null
 
     override fun onViewCreated(context: Context) {
-        getLocation(context)
+        getLocationWeather(context)
     }
 
     override fun getTodayWeather(city: String, units: String, appid: String) {
@@ -82,13 +82,12 @@ class TodayWeatherPresenter(
         })
     }
 
-    private fun getLocation(context: Context) {
+    private fun getLocationWeather(context: Context) {
         view.showLoading()
         GpsLocationHelper().startListeningUserLocation(context,
             object : GpsLocationHelper.MyLocationListener {
                 override fun onLocationChanged(location: Location) {
                     if (location != null) {
-
                         getTodayWeatherByLocation(
                             location,
                             Constants.METRIC,
@@ -98,7 +97,6 @@ class TodayWeatherPresenter(
                             "Today Weather fragment",
                             location.latitude.toString() + "\t" + location.longitude.toString()
                         )
-                        //GpsLocationHelper().getCityNameByLocation(requireContext(),location.latitude,location.longitude)
                     } else {
                         Log.d("Today weather fragment", "location is null")
                     }
