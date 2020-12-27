@@ -86,6 +86,7 @@ class TodayWeatherPresenter(
         view.showLoading()
         GpsLocationHelper().startListeningUserLocation(context,
             object : GpsLocationHelper.MyLocationListener {
+
                 override fun onLocationChanged(location: Location) {
                     if (location != null) {
                         getTodayWeatherByLocation(
@@ -102,5 +103,6 @@ class TodayWeatherPresenter(
                     }
                 }
             })
+        
     }
 }

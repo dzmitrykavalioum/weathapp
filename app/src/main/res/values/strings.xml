@@ -11,4 +11,7 @@
     <string name="temp_short">Temp</string>
     <string name="title_today">Today</string>
     <string name="title_forecast">Forecast</string>
+    <string name="wind">Wind</string>
+    <string name="cloudiness">Cloudiness</string>
+    <string name="pressure">Pressure</string>
 </resources>
